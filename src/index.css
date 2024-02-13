@@ -1,0 +1,128 @@
+body {
+    background-color: #74E0AA;
+    font-family: "Chakra Petch", sans-serif;
+}
+
+.active {
+    background-color: #BEE893;
+    color: black;
+}
+
+* {
+    text-decoration: none;
+    font-family: "Chakra Petch", sans-serif;
+}
+
+nav li {
+    border-color: black;
+    border-style: solid;
+    padding: 10px;
+    margin-left: -1px;
+    margin-right: -1px;
+}
+
+nav li a {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding: 10px;
+    margin-left: -10px;
+    margin-right: -10px;
+    color: black;
+}
+
+nav li:hover {
+    /* border-color: #BEE893; */
+    background-color: #BEE893;
+    color: black;
+}
+
+nav * {
+    display: inline;
+}
+
+nav {
+    display: flex;
+    /* position: fixed; */
+    flex-direction: row;
+    justify-content: end;
+    margin: 10px;
+    padding: 10px;
+    border-style: solid;
+    /* top: 0;
+    left: 0;
+    right: 0; */
+    height: 50px;
+    align-items: center;
+    /* text-emphasis: bold; */
+}
+
+main {
+    height: 85vh;
+    /* border-radius: 5%; */
+    border-style: solid;
+    margin: 10px;
+    /* overflow: scroll; */
+    padding: 10px;
+}
+
+.search-bar {
+    width: 85%;
+    border-radius: 3px;
+    padding: 7px;
+}
+
+.search-button {
+    border-radius: 3px;
+    padding: 7px;
+}
+
+.search-form {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.outer-box {
+    border-style: solid;
+    border-radius: 5px;
+    width: 17vw;
+    height: 30vw;
+    padding: 5px;
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(255, 255, 250, 255);
+
+}
+
+.photo-elem img {
+    max-width: 100px;
+    max-height: 400px;
+}
+
+.photo-elem {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-blend-mode: color;
+    background-color: rgba(129, 241, 247, 255);
+    padding-top: -100px;
+    border-style: solid;
+    border-radius: 5px;
+    margin-top: -10px;
+    width: 200px;
+    height: 400px;
+}
+
+.results-box {
+    display: flex;
+    flex-direction: row;
+    border-style: solid;
+    height: 71vh;
+    justify-content: center;
+    margin: 60px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    overflow: scroll;
+}
