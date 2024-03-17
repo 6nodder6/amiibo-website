@@ -93,6 +93,15 @@ main {
     align-items: center;
 }
 
+.dropdowns {
+    background-color: rgba(129, 241, 247, 255);
+    border: 4px solid black;
+    padding: 7px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+}
 .outer-box {
     border-style: solid;
     border-radius: 5px;

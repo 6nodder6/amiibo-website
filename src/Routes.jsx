@@ -80,16 +80,18 @@ export function Home(props) {
                         }} />
                         <input type='submit' value="Search" className='search-button' />
                     </div>
-                    <PersonalityDropdown setPersonalityQuery={setPersonalityQuery} />
-                    <SpeciesDropdown setSpeciesQuery={setSpeciesQuery} />
-                    <GenderDropdown setGenderQuery={setGenderQuery} />
-                    <input type='reset' onClick={(e) => {
-                        setGenderQuery("")
-                        setPersonalityQuery("")
-                        setNameQuery("")
-                        setSpeciesQuery("")
-                        setSearchParams({name: "", gender: "", personality: "", species: ""})
-                    }}/>
+                    <div className='dropdowns'>
+                        <PersonalityDropdown setPersonalityQuery={setPersonalityQuery} />
+                        <SpeciesDropdown setSpeciesQuery={setSpeciesQuery} />
+                        <GenderDropdown setGenderQuery={setGenderQuery} />
+                        <input type='reset' onClick={(e) => {
+                            setGenderQuery("")
+                            setPersonalityQuery("")
+                            setNameQuery("")
+                            setSpeciesQuery("")
+                            setSearchParams({name: "", gender: "", personality: "", species: ""})
+                        }}/>
+                    </div>
                 </form>
                 <div className='results-box'>
 
