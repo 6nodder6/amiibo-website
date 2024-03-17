@@ -1,7 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useDispatch, useSelector } from 'react-redux';
+import { selectFavorites } from './redux/favoritesSlice';
 
-const API_KEY = "26b6d7c2-a054-4308-bce3-4f8c956cc675"
+import { AmiiboElement } from './components/amiiboElement';
 
+import { SpeciesDropdown, PersonalityDropdown, GenderDropdown } from './components/dropdownElements';
+
+let currid = 1;
 import {
     Link,
     NavLink,
@@ -12,132 +18,86 @@ import {
     useRouteError
 } from 'react-router-dom'
 
-import {
-    AmiiboElement
-} from './App'
-// const api_key = "26b6d7c2-a054-4308-bce3-4f8c956cc675"
-
-export function Root(props) {
-    const { children } = props
-
-    const [favorites, setFavorites] = useState([])
-
-
-    // setFavorites((prev) => [
-    //     {
-    //         "name": "Coach",
-    //         "url": `https://api.nookipedia.com/villagers?name=coach&api_key=${API_KEY}`
-    //     },
-    //     ...prev])
-    console.log("Favorites in root: ", favorites)
-
-    return (
-        <>
-            <aside>
-
-                <nav>
-                    <ul>
-                        <li>
-                            <NavLink to="/">
-                                HOME
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/owned">
-                                OWNED
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/collections">
-                                COLLECTIONS
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/profile">
-                                PROFILE
-                            </NavLink>
-                        </li>
-                    </ul>
-
-                </nav>
-
-            </aside>
-
-            <main>
-                {children || <Outlet context={[favorites, setFavorites]} />}
-            </main>
-        </>
-    )
-}
-
 export function Home(props) {
     const [searchParams, setSearchParams] = useSearchParams()
     const [uinput, setUinput] = useState("")
-    const query = searchParams.get("q")
-    console.log("Query: ", query)
+
+    const queryName = searchParams.get('name')
+    const querySpecies = searchParams.get('species')
+    const queryPersonality = searchParams.get('personality')
+    const queryGender = searchParams.get('gender')
+
+    let params = {
+        name: queryName,
+        species: querySpecies,
+        personality: queryPersonality,
+        gender: queryGender
+    }
+
     //The inputted query is the search query or an empty string
-    const [inputtedQuery, setInputtedQuery] = useState(query || "")
+    const [nameQuery, setNameQuery] = useState(params.name || "")
+    const [speciesQuery, setSpeciesQuery] = useState(params.species || "")
+    const [personalityQuery, setPersonalityQuery] = useState(params.personality || "")
+    const [genderQuery, setGenderQuery] = useState(params.gender || "")
 
-    console.log("inputtedQuery: ", inputtedQuery)
-    const [amiibos, setAmiibos] = useState([])
+    
 
-    const [favorites, setFavorites] = useOutletContext()
-    console.log(favorites)
-    const [error, setError] = useState(null)
-
-    // Use an effect because we're maintaining a connection with the API
-    useEffect(() => {
-        async function searchAmiibos() {
-            try {
-                console.log("Query in searchAmiibos: ", query)
-                const res = await fetch(query ? `https://api.nookipedia.com/villagers?name=${query.toLowerCase()}&api_key=${API_KEY}` : `https://api.nookipedia.com/villagers?api_key=${API_KEY}`)
-
-                console.log("Response from API: ", res)
-                const resBody = await res.json()
-                console.log("resBody.name: ", resBody[0].name)
-
-                console.log("ResBody: ", resBody)
-                // Set the amiibo array to be either the response array or an empty array if nothing is returned
-                // console.log("resBody.items: ", resBody.items)
-
-                console.log("resbody[0]: ", resBody[0])
-                setAmiibos(resBody || [])
-                console.log("amiibos: ", amiibos)
-
-                setError(null)
+    const { fetchStatus, isLoading, error, data } = useQuery({
+        queryKey: ["getAmiibos", params],
+        queryFn: async () => {
+            try{
+                console.log("query: ", params)
+                const res = await fetch(
+                    'http://127.0.0.1:5000/query', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(params)
+                    }
+                )
+                return res.json()
             }
-            catch (err) {
-                console.error(err)
-                setError(err)
+            catch (error) {
+                console.error("error: ", error)
             }
+
         }
-        // If the query is not empty, look for the results
-        // if (query) {
-        // console.log("searching")
-        searchAmiibos()
-        // }
-    }, [query])
-
+    })
+    
     return (
         <>
             <div>
                 <form className='search-form' onSubmit={e => {
                     e.preventDefault()
-                    setSearchParams({ q: inputtedQuery })
+
+                    setSearchParams({name: nameQuery, gender: genderQuery, personality: personalityQuery, species: speciesQuery})
+                    // console.log("Params: ", params)
                 }}>
-                    <input type='text' value={inputtedQuery} className='search-bar' onChange={(e) => {
-                        setInputtedQuery(e.target.value)
-                    }} />
-                    {console.log(uinput)}
-                    <input type='submit' value="Submit" className='search-button' />
+                    <div className='search-bar'>
+                        <input type='text' id='name' value={nameQuery} className='search-bar' onChange={(e) => {
+                            setNameQuery(e.target.value)
+                        }} />
+                        <input type='submit' value="Search" className='search-button' />
+                    </div>
+                    <PersonalityDropdown setPersonalityQuery={setPersonalityQuery} />
+                    <SpeciesDropdown setSpeciesQuery={setSpeciesQuery} />
+                    <GenderDropdown setGenderQuery={setGenderQuery} />
+                    <input type='reset' onClick={(e) => {
+                        setGenderQuery("")
+                        setPersonalityQuery("")
+                        setNameQuery("")
+                        setSpeciesQuery("")
+                        setSearchParams({name: "", gender: "", personality: "", species: ""})
+                    }}/>
                 </form>
                 <div className='results-box'>
 
                     {/* <h1 key={amiibos.id}>{amiibos.name}</h1> */}
-                    {amiibos.map(amiibo => (
-                        <AmiiboElement who={amiibo}
-                            favorites={favorites}
-                            setFavorites={setFavorites}
+                    {data && data.map(amiibo => (
+                        <AmiiboElement 
+                            key={currid++}
+                            who={amiibo}
                         />
                     ))}
                 </div>
@@ -146,31 +106,8 @@ export function Home(props) {
     )
 }
 
-
-// export function SearchResults(props) {
-//     const { Qname, Qspecies, Qtype } = props
-//     console.log("Qname: ", Qname)
-//     console.log("Qspecies: ", Qspecies)
-//     console.log("Qtype: ", Qtype)
-
-//     var resBody = ""
-
-//     async function getAmiibo() {
-//         const res = await fetch(
-//             `https://api.nookipedia.com/villagers?name=${Qname.toLowerCase()}&api_key=26b6d7c2-a054-4308-bce3-4f8c956cc675`
-//         )
-
-//         resBody = await res.json()
-//         // console.log("resBody: ", resBody)
-//     }
-
-
-//     // console.log("ResBody: ", resBody)
-
-// }
-
 export function Owned() {
-    const [favorites, setFavorites] = useOutletContext()
+    const favorites = useSelector(selectFavorites)
     return (
         <>
             <h2>Owned List</h2>
